@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pomodoro Timer</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <div class="logo">pomo<span>•</span>focus</div>
+    <div class="total-sessions" id="total-sessions">0 sessões completas</div>
+  </div>
+
+  <div class="phase-badge focus" id="phase-badge">Foco</div>
+
+  <div class="ring-wrap" id="ring-wrap">
+    <svg viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle class="ring-bg" cx="110" cy="110" r="96" stroke-width="8" />
+      <circle
+        class="ring-progress"
+        id="ring"
+        cx="110" cy="110" r="96"
+        stroke-width="8"
+        stroke-dasharray="603.2"
+        stroke-dashoffset="0"
+        fill="none"
+      />
+    </svg>
+    <div class="ring-center">
+      <div class="time-display" id="time-display">25:00</div>
+    </div>
+  </div>
+
+  <div class="cycles" id="cycles">
+    <div class="cycle-dot active" data-i="1">1</div>
+    <div class="cycle-dot" data-i="2">2</div>
+    <div class="cycle-dot" data-i="3">3</div>
+    <div class="cycle-dot" data-i="4">4</div>
+  </div>
+
+  <div class="controls">
+    <button class="btn btn-primary" id="btn-start" onclick="toggleTimer()">Iniciar</button>
+    <button class="btn" onclick="resetTimer()">Reiniciar</button>
+  </div>
+
+  <div class="info-bar">
+    <div class="info-item">
+      <div class="info-value" id="info-cycle">1/4</div>
+      <div class="info-label">ciclo</div>
+    </div>
+    <div class="info-sep"></div>
+    <div class="info-item">
+      <div class="info-value" id="info-total">0</div>
+      <div class="info-label">pomodoros hoje</div>
+    </div>
+    <div class="info-sep"></div>
+    <div class="info-item">
+      <div class="info-value" id="info-next">5 min</div>
+      <div class="info-label">próx. pausa</div>
+    </div>
+  </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

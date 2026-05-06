@@ -1,0 +1,398 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ─── Variables ─────────────────────────────────────────────── */
+:root {
+  --bg: #0e0e0f;
+  --surface: #18181a;
+  --surface2: #222224;
+  --border: rgba(255, 255, 255, 0.08);
+  --text: #f0ede8;
+  --muted: rgba(240, 237, 232, 0.45);
+  --accent-focus: #e8c547;
+  --accent-short: #4ecb8d;
+  --accent-long: #5ba8f5;
+  --font-mono: 'DM Mono', monospace;
+  --font-sans: 'DM Sans', sans-serif;
+  --radius: 16px;
+}
+
+/* ─── Base ───────────────────────────────────────────────────── */
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Background ambient glow */
+body::before {
+  content: '';
+  position: fixed;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(232, 197, 71, 0.06) 0%, transparent 70%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  transition: background 1s ease;
+}
+
+body.rest::before {
+  background: radial-gradient(circle, rgba(78, 203, 141, 0.06) 0%, transparent 70%);
+}
+
+body.long-rest::before {
+  background: radial-gradient(circle, rgba(91, 168, 245, 0.06) 0%, transparent 70%);
+}
+
+/* ─── Layout ─────────────────────────────────────────────────── */
+.container {
+  width: 100%;
+  max-width: 400px;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ─── Header ─────────────────────────────────────────────────── */
+.header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2.5rem;
+}
+
+.logo {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+
+.logo span {
+  color: var(--accent-focus);
+  transition: color 1s ease;
+}
+
+body.rest .logo span      { color: var(--accent-short); }
+body.long-rest .logo span { color: var(--accent-long); }
+
+.total-sessions {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* ─── Phase badge ────────────────────────────────────────────── */
+.phase-badge {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 99px;
+  border: 1px solid;
+  margin-bottom: 2rem;
+  transition: all 0.6s ease;
+}
+
+.phase-badge.focus {
+  color: var(--accent-focus);
+  border-color: rgba(232, 197, 71, 0.3);
+  background: rgba(232, 197, 71, 0.07);
+}
+
+.phase-badge.rest {
+  color: var(--accent-short);
+  border-color: rgba(78, 203, 141, 0.3);
+  background: rgba(78, 203, 141, 0.07);
+}
+
+.phase-badge.long {
+  color: var(--accent-long);
+  border-color: rgba(91, 168, 245, 0.3);
+  background: rgba(91, 168, 245, 0.07);
+}
+
+/* ─── Ring ───────────────────────────────────────────────────── */
+.ring-wrap {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  margin-bottom: 2.5rem;
+}
+
+.ring-wrap svg {
+  width: 100%;
+  height: 100%;
+}
+
+.ring-bg {
+  stroke: var(--surface2);
+}
+
+.ring-progress {
+  stroke: var(--accent-focus);
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+  transition: stroke-dashoffset 1s linear, stroke 0.8s ease;
+}
+
+body.rest .ring-progress      { stroke: var(--accent-short); }
+body.long-rest .ring-progress { stroke: var(--accent-long); }
+
+.ring-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.time-display {
+  font-family: var(--font-mono);
+  font-size: 52px;
+  font-weight: 400;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+/* ─── Cycle dots ─────────────────────────────────────────────── */
+.cycles {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 2.5rem;
+}
+
+.cycle-dot {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+  transition: all 0.4s ease;
+}
+
+.cycle-dot.done {
+  background: var(--accent-focus);
+  border-color: var(--accent-focus);
+  color: #000;
+}
+
+.cycle-dot.active {
+  border-color: var(--accent-focus);
+  color: var(--accent-focus);
+  box-shadow: 0 0 0 3px rgba(232, 197, 71, 0.12);
+}
+
+body.rest .cycle-dot.done {
+  background: var(--accent-short);
+  border-color: var(--accent-short);
+}
+
+body.rest .cycle-dot.active {
+  border-color: var(--accent-short);
+  color: var(--accent-short);
+  box-shadow: 0 0 0 3px rgba(78, 203, 141, 0.12);
+}
+
+/* ─── Controls ───────────────────────────────────────────────── */
+.controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 2rem;
+}
+
+.btn {
+  padding: 11px 28px;
+  border-radius: 99px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.01em;
+}
+
+.btn:hover  { background: var(--surface2); border-color: rgba(255, 255, 255, 0.15); }
+.btn:active { transform: scale(0.97); }
+
+.btn-primary {
+  background: var(--accent-focus);
+  color: #0e0e0f;
+  border-color: transparent;
+  min-width: 120px;
+  transition: background 0.6s ease, color 0.2s, transform 0.1s;
+}
+
+.btn-primary:hover          { opacity: 0.88; background: var(--accent-focus); }
+body.rest .btn-primary      { background: var(--accent-short); }
+body.long-rest .btn-primary { background: var(--accent-long); }
+
+/* ─── Info bar ───────────────────────────────────────────────── */
+.info-bar {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.info-value {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.info-label {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+.info-sep {
+  width: 1px;
+  height: 28px;
+  background: var(--border);
+}
+
+/* ─── Pulse animation ────────────────────────────────────────── */
+@keyframes pulse-ring {
+  0%   { box-shadow: 0 0 0 0px rgba(232, 197, 71, 0.4); }
+  100% { box-shadow: 0 0 0 20px rgba(232, 197, 71, 0); }
+}
+
+.ring-wrap.pulse svg circle.ring-progress {
+  animation: pulse-ring 0.6s ease-out;
+}
+
+/* ─── Responsive — mobile ────────────────────────────────────── */
+@media (max-width: 480px) {
+  body {
+    align-items: flex-start;
+    overflow-y: auto;
+  }
+
+  .container {
+    padding: 3rem 1.25rem 2rem;
+    min-height: 100dvh;
+    justify-content: center;
+  }
+
+  .header {
+    margin-bottom: 2rem;
+  }
+
+  .logo {
+    font-size: 12px;
+  }
+
+  .total-sessions {
+    font-size: 11px;
+  }
+
+  .phase-badge {
+    margin-bottom: 1.5rem;
+  }
+
+  .ring-wrap {
+    width: min(68vw, 220px);
+    height: min(68vw, 220px);
+    margin-bottom: 2rem;
+  }
+
+  .time-display {
+    font-size: clamp(36px, 12vw, 52px);
+  }
+
+  .cycles {
+    gap: 8px;
+    margin-bottom: 2rem;
+  }
+
+  .cycle-dot {
+    width: 30px;
+    height: 30px;
+    font-size: 11px;
+  }
+
+  .controls {
+    width: 100%;
+    margin-bottom: 1.75rem;
+  }
+
+  .btn {
+    flex: 1;
+    padding: 13px 16px;
+    font-size: 15px;
+    /* bigger tap target on mobile */
+    min-height: 48px;
+  }
+
+  .btn-primary {
+    min-width: unset;
+  }
+
+  .info-bar {
+    gap: 1rem;
+  }
+
+  .info-value {
+    font-size: 15px;
+  }
+
+  .info-label {
+    font-size: 10px;
+  }
+}
+
+/* ─── Responsive — very small screens ───────────────────────── */
+@media (max-width: 360px) {
+  .container {
+    padding: 2rem 1rem 1.5rem;
+  }
+
+  .ring-wrap {
+    width: 72vw;
+    height: 72vw;
+  }
+
+  .time-display {
+    font-size: 10vw;
+  }
+
+  .info-bar {
+    gap: 0.75rem;
+  }
+}
