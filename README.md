@@ -4,7 +4,7 @@ Timer Pomodoro minimalista com design dark, troca de fases automática e persist
 
 ## Demonstração
 
-🔗 [Acessar projeto](https://eduardoadf-dev.github.io/Pomodoro/)
+Link do projeto: https://eduardoadf-dev.github.io/Pomodoro/
 
 ## Funcionalidades
 
