@@ -6,7 +6,8 @@ const CONFIG = {
   cyclesBeforeLong: 4,
 };
 
-const CIRCUMFERENCE = 603.2;
+// Circunferência do anel: 2 * π * r = 2 * π * 96 ≈ 603.2
+const CIRCUMFERENCE = 2 * Math.PI * 96;
 
 // ─── State ────────────────────────────────────────────────────
 let phaseIndex     = 0; // pares = foco, ímpares = pausa
@@ -14,19 +15,26 @@ let timeLeft       = CONFIG.focus;
 let totalTime      = CONFIG.focus;
 let running        = false;
 let interval       = null;
-let totalPomodoros = 0;
+
+// Persistência: recupera total de pomodoros do localStorage
+let totalPomodoros = parseInt(localStorage.getItem('total-pomodoros') || '0');
 
 // ─── Elements ─────────────────────────────────────────────────
 const ringEl    = document.getElementById('ring');
 const timeEl    = document.getElementById('time-display');
 const badgeEl   = document.getElementById('phase-badge');
 const btnStart  = document.getElementById('btn-start');
+const btnReset  = document.getElementById('btn-reset');
 const dotsEl    = document.getElementById('cycles');
 const totalEl   = document.getElementById('total-sessions');
 const infoCycle = document.getElementById('info-cycle');
 const infoTotal = document.getElementById('info-total');
 const infoNext  = document.getElementById('info-next');
 const ringWrap  = document.getElementById('ring-wrap');
+
+// ─── Event Listeners (sem onclick inline no HTML) ─────────────
+btnStart.addEventListener('click', toggleTimer);
+btnReset.addEventListener('click', resetTimer);
 
 // ─── Helpers ──────────────────────────────────────────────────
 function pad(n) {
@@ -47,7 +55,7 @@ function isRestPhase() {
 
 function isLongRest() {
   const fd = focusDone();
-return isRestPhase() && fd > 0 && fd % CONFIG.cyclesBeforeLong === 0;
+  return isRestPhase() && fd > 0 && fd % CONFIG.cyclesBeforeLong === 0;
 }
 
 function currentDuration() {
@@ -65,6 +73,9 @@ function nextRestLabel() {
 // ─── UI Update ────────────────────────────────────────────────
 function updateUI() {
   timeEl.textContent = fmt(timeLeft);
+
+  // Atualiza o título da aba com o tempo restante
+  document.title = `${fmt(timeLeft)} — ${isRestPhase() ? 'Pausa' : 'Foco'}`;
 
   const frac = totalTime > 0 ? timeLeft / totalTime : 1;
   ringEl.style.strokeDashoffset = CIRCUMFERENCE * (1 - frac);
@@ -130,16 +141,20 @@ function playBeep() {
 function onPhaseEnd() {
   playBeep();
 
-  if (!isRestPhase()) totalPomodoros++;
+  if (!isRestPhase()) {
+    totalPomodoros++;
+    // Persiste o total no localStorage
+    localStorage.setItem('total-pomodoros', totalPomodoros);
+  }
 
   // Pulse animation
   ringWrap.classList.add('pulse');
   setTimeout(() => ringWrap.classList.remove('pulse'), 700);
 
-  // Advance phase or reset after long rest
+  // Correção do bug: reseta direto após pausa longa
+  // em vez de incrementar e comparar depois
   if (isRestPhase() && isLongRest()) {
-    phaseIndex++;
-    if (focusDone() >= CONFIG.cyclesBeforeLong) phaseIndex = 0;
+    phaseIndex = 0;
   } else {
     phaseIndex++;
   }
@@ -156,6 +171,7 @@ function tick() {
     timeLeft = 0;
     updateUI();
     clearInterval(interval);
+    interval = null; // garante limpeza do intervalo
     running = false;
     btnStart.textContent = 'Iniciar';
     onPhaseEnd();
@@ -167,9 +183,11 @@ function tick() {
 function toggleTimer() {
   if (running) {
     clearInterval(interval);
+    interval = null; // garante limpeza do intervalo
     running = false;
     btnStart.textContent = 'Continuar';
   } else {
+    if (interval) clearInterval(interval); // segurança extra contra múltiplos intervalos
     running = true;
     btnStart.textContent = 'Pausar';
     interval = setInterval(tick, 1000);
@@ -178,11 +196,13 @@ function toggleTimer() {
 
 function resetTimer() {
   clearInterval(interval);
+  interval   = null;
   running    = false;
   phaseIndex = 0;
   totalTime  = CONFIG.focus;
   timeLeft   = CONFIG.focus;
   btnStart.textContent = 'Iniciar';
+  document.title = 'Pomodoro Timer';
   updateUI();
 }
 

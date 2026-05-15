@@ -356,7 +356,6 @@ body.long-rest .btn-primary { background: var(--accent-long); }
     flex: 1;
     padding: 13px 16px;
     font-size: 15px;
-    /* bigger tap target on mobile */
     min-height: 48px;
   }
 
